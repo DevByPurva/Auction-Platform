@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Auction Detail</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h2>AuctionHub</h2>
+
+    <div class="nav-links">
+        <a href="dashboard.html">Home</a>
+        <a href="how-it-works.html">How Auction Works</a>
+        <a href="about.html">About</a>
+
+        <button onclick="logout()">Logout</button>
+    </div>
+
+</div>
+
+<div class="detail-container">
+
+    <img id="image">
+
+    <h2 id="itemName"></h2>
+
+    <p class="price" id="price"></p>
+
+    <p id="timer"></p>
+
+    <div id="winnerBanner"></div>
+
+    <h3>Place Bid</h3>
+
+    <input id="amount" placeholder="Enter bid">
+
+    <button onclick="placeBid()">Place Bid</button>
+
+    <h3>Bid History</h3>
+
+    <table class="bid-table">
+
+        <thead>
+        <tr>
+            <th>User</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+
+        <tbody id="history"></tbody>
+
+    </table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="js/auction.js"></script>
+
+</body>
+</html>

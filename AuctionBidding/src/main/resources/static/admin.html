@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Admin Auction Panel</title>
+
+</head>
+
+<body>
+
+<h2>Add Auction Item</h2>
+
+<form id="addAuction">
+
+    <label>Item Name</label><br>
+    <input type="text" id="name" placeholder="Item Name" required>
+    <br><br>
+
+    <label>Starting Price</label><br>
+    <input type="number" id="price" placeholder="Starting Price" required>
+    <br><br>
+
+    <label>Auction Start Time</label>
+    <input type="datetime-local" id="startTime">
+
+    <label>Auction End Time</label>
+    <input type="datetime-local" id="endTime">
+
+    <label>Upload Image</label><br>
+    <input type="file" id="image" required>
+    <br><br>
+
+    <button type="button" onclick="createAuction()">Add Auction</button>
+
+</form>
+
+<script src="js/auction.js"></script>
+
+</body>
+</html>
