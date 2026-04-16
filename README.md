@@ -55,7 +55,6 @@ Auction/
 ### Admin
 - Separate login (admin table, not user table)
 - Create auctions with full product details (brand, model, color, years used, description)
-- Category restricted to electronics: PHONE, LAPTOP, EQUIPMENT
 - View all auctions with live price updates
 - Expand any auction to see current bid history
 - Force-close a live auction
@@ -126,7 +125,7 @@ Edit `AuctionBidding/src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/auctiondb
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=****
 ```
 
 ### 2. Start the backend
