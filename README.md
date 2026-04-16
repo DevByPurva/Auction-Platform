@@ -1,4 +1,4 @@
-# 🏷 AuctionHub — Real-Time Electronics Auction Platform
+# AuctionHub — Real-Time Electronics Auction Platform
 
 A full-stack real-time auction system built with **Spring Boot**, **React.js**, **WebSocket (STOMP/SockJS)**, and **MySQL**. Multiple users can bid simultaneously and see live price updates instantly — no page refresh needed.
 
