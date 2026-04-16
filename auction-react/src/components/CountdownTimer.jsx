@@ -26,7 +26,6 @@ export default function CountdownTimer({ endTime, onExpire }) {
       }
       setTimeLeft(diff);
     };
-
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
@@ -35,13 +34,16 @@ export default function CountdownTimer({ endTime, onExpire }) {
   if (timeLeft === null) return <span className="timer">Loading...</span>;
   if (timeLeft <= 0)     return <span className="timer expired">Auction Ended</span>;
 
-  const m = Math.floor(timeLeft / 60000);
-  const s = Math.floor((timeLeft % 60000) / 1000);
+  const h = Math.floor(timeLeft / (1000 * 60 * 60));
+  const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
   const urgent = timeLeft < 60000;
+
+  const pad = n => String(n).padStart(2, '0');
 
   return (
     <span className={`timer ${urgent ? 'urgent' : ''}`}>
-      ⏱ {m}m {s.toString().padStart(2, '0')}s
+      {pad(h)}:{pad(m)}:{pad(s)}
     </span>
   );
 }

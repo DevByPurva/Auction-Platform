@@ -3,6 +3,7 @@ package com.example.auctionbidding.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name="admins")
 public class Admin {
 
     @Id

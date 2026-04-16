@@ -11,50 +11,56 @@ public class Auction {
     private Long id;
 
     private String itemName;
-
     private double currentPrice;
-
     private String imageUrl;
-
-    private LocalDateTime endTime;
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
-    public LocalDateTime getStartTime(){
-        return startTime;
-    }
+    // --- NEW product detail fields ---
+    private String brand;
+    private String model;
+    private String color;
+    private Integer yearsUsed;
 
-    public void setStartTime(LocalDateTime startTime){
-        this.startTime = startTime;
-    }
-    public Long getId(){ return id; }
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    public String getItemName(){ return itemName; }
+    private String category; // PHONE | LAPTOP | EQUIPMENT
 
-    public void setItemName(String itemName){
-        this.itemName=itemName;
-    }
+    // --- existing getters/setters ---
+    public Long getId()                          { return id; }
 
-    public double getCurrentPrice(){
-        return currentPrice;
-    }
+    public String getItemName()                  { return itemName; }
+    public void setItemName(String v)            { this.itemName = v; }
 
-    public void setCurrentPrice(double currentPrice){
-        this.currentPrice=currentPrice;
-    }
+    public double getCurrentPrice()              { return currentPrice; }
+    public void setCurrentPrice(double v)        { this.currentPrice = v; }
 
-    public String getImageUrl(){
-        return imageUrl;
-    }
+    public String getImageUrl()                  { return imageUrl; }
+    public void setImageUrl(String v)            { this.imageUrl = v; }
 
-    public void setImageUrl(String imageUrl){
-        this.imageUrl=imageUrl;
-    }
+    public LocalDateTime getStartTime()          { return startTime; }
+    public void setStartTime(LocalDateTime v)    { this.startTime = v; }
 
-    public LocalDateTime getEndTime(){
-        return endTime;
-    }
+    public LocalDateTime getEndTime()            { return endTime; }
+    public void setEndTime(LocalDateTime v)      { this.endTime = v; }
 
-    public void setEndTime(LocalDateTime endTime){
-        this.endTime=endTime;
-    }
+    // --- new getters/setters ---
+    public String getBrand()                     { return brand; }
+    public void setBrand(String v)               { this.brand = v; }
+
+    public String getModel()                     { return model; }
+    public void setModel(String v)               { this.model = v; }
+
+    public String getColor()                     { return color; }
+    public void setColor(String v)               { this.color = v; }
+
+    public Integer getYearsUsed()                { return yearsUsed; }
+    public void setYearsUsed(Integer v)          { this.yearsUsed = v; }
+
+    public String getDescription()               { return description; }
+    public void setDescription(String v)         { this.description = v; }
+
+    public String getCategory()                  { return category; }
+    public void setCategory(String v)            { this.category = v; }
 }

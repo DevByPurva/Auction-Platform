@@ -36,7 +36,7 @@ export default function AuctionDetailPage() {
     api.getWinner(id).then(w => {
       setWinner(w);
       if (w && String(w.user?.id) === String(userId)) {
-        addNotification('win', `🏆 You won "${auction?.itemName}" with ₹${w.amount}!`);
+        addNotification('win', `You won "${auction?.itemName}" with ₹${w.amount}!`);
       }
     });
   }, [id, userId, auction, addNotification]);
@@ -51,13 +51,15 @@ export default function AuctionDetailPage() {
     });
 
     api.getBidHistory(id).then(data => {
-      setHistory(data.map(b => ({ username: b.user?.username, amount: b.amount })));
+      setHistory(data.map(b => ({ username: b.user?.username, amount: b.amount, createdAt: b.createdAt })));
     });
 
     connectSocket(() => {
       subscribeToAuction(id, (payload) => {
         setAuction(prev => prev ? { ...prev, currentPrice: payload.currentPrice } : prev);
-        setHistory(payload.bidHistory || []);
+        setHistory((payload.bidHistory || []).map(b => ({
+          username: b.username, amount: b.amount, createdAt: b.createdAt
+        })));
       });
 
       subscribeToNotifications(userId, (notif) => {
@@ -91,12 +93,23 @@ export default function AuctionDetailPage() {
 
         <div className="detail-right">
           <h2>{auction.itemName}</h2>
+
+          {/* Product details */}
+          <div className="product-details">
+            {auction.category && <span className="category-badge lg">{auction.category}</span>}
+            {auction.brand    && <span className="detail-chip"> {auction.brand}</span>}
+            {auction.model    && <span className="detail-chip"> {auction.model}</span>}
+            {auction.color    && <span className="detail-chip"> {auction.color}</span>}
+            {auction.yearsUsed != null && <span className="detail-chip"> {auction.yearsUsed}yr used</span>}
+          </div>
+          {auction.description && <p className="auction-desc">{auction.description}</p>}
+
           <p className="current-price">Current Price: <strong>₹{auction.currentPrice?.toLocaleString()}</strong></p>
           <CountdownTimer endTime={auction.endTime} onExpire={handleExpire} />
 
           {winner && (
             <div className="winner-banner">
-              🏆 Winner: <strong>{winner.user?.username}</strong> — ₹{winner.amount?.toLocaleString()}
+              Winner: <strong>{winner.user?.username}</strong> — ₹{winner.amount?.toLocaleString()}
             </div>
           )}
 

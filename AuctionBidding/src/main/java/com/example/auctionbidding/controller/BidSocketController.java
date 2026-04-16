@@ -70,7 +70,7 @@ public class BidSocketController {
                 : history.get(0).getUser().getUsername();
 
         List<BidEntry> entries = history.stream()
-                .map(b -> new BidEntry(b.getUser().getUsername(), b.getAmount()))
+                .map(b -> new BidEntry(b.getUser().getUsername(), b.getAmount(), b.getCreatedAt()))
                 .collect(Collectors.toList());
 
         BidUpdatePayload payload = new BidUpdatePayload(

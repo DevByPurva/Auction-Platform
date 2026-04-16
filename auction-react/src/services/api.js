@@ -4,6 +4,7 @@ export const api = {
   // Auth
   login:       (data)       => post('/login', data),
   adminLogin:  (data)       => post('/admin/login', data),
+  signup:      (data)       => post('/signup', data),
 
   // Auctions
   getAuctions: ()           => get('/auctions'),
@@ -36,9 +37,9 @@ async function post(path, body) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  // some endpoints return plain text
-  const ct = res.headers.get('content-type') || '';
-  return ct.includes('application/json') ? res.json() : res.text();
+  const text = await res.text();
+  if (!text || text === 'null') return null;
+  try { return JSON.parse(text); } catch { return text; }
 }
 
 async function postForm(path, params) {
@@ -47,7 +48,9 @@ async function postForm(path, params) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams(params).toString(),
   });
-  return res.json();
+  const text = await res.text();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch { return text; }
 }
 
 async function postMultipart(path, formData) {

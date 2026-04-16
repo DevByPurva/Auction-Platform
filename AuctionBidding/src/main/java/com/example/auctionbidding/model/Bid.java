@@ -1,6 +1,7 @@
 package com.example.auctionbidding.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Bid {
@@ -11,33 +12,31 @@ public class Bid {
 
     private double amount;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     @ManyToOne
     private Auction auction;
 
     @ManyToOne
     private User user;
 
-    public Long getId(){ return id; }
-
-    public double getAmount(){ return amount; }
-
-    public void setAmount(double amount){
-        this.amount=amount;
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    public Auction getAuction(){
-        return auction;
-    }
+    public Long getId()                       { return id; }
 
-    public void setAuction(Auction auction){
-        this.auction=auction;
-    }
+    public double getAmount()                 { return amount; }
+    public void setAmount(double v)           { this.amount = v; }
 
-    public User getUser(){
-        return user;
-    }
+    public LocalDateTime getCreatedAt()       { return createdAt; }
+    public void setCreatedAt(LocalDateTime v) { this.createdAt = v; }
 
-    public void setUser(User user){
-        this.user=user;
-    }
+    public Auction getAuction()               { return auction; }
+    public void setAuction(Auction v)         { this.auction = v; }
+
+    public User getUser()                     { return user; }
+    public void setUser(User v)               { this.user = v; }
 }

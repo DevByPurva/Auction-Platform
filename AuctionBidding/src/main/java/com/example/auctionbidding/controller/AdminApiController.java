@@ -1,12 +1,13 @@
 package com.example.auctionbidding.controller;
 
+import com.example.auctionbidding.model.Admin;
 import com.example.auctionbidding.model.Auction;
 import com.example.auctionbidding.model.Bid;
-import com.example.auctionbidding.model.User;
+import com.example.auctionbidding.repository.AdminRepository;
 import com.example.auctionbidding.repository.AuctionRepository;
-import com.example.auctionbidding.repository.UserRepository;
 import com.example.auctionbidding.service.BidService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -18,19 +19,15 @@ import java.util.Map;
 public class AdminApiController {
 
     @Autowired private AuctionRepository auctionRepo;
-    @Autowired private UserRepository userRepo;
+    @Autowired private AdminRepository adminRepo;
     @Autowired private BidService bidService;
     @Autowired private BidSocketController bidSocketController;
 
-    /** POST /admin/login — checks users table where role = ADMIN */
+    /** POST /admin/login — checks admin table ONLY */
     @PostMapping("/login")
-    public User adminLogin(@RequestBody Map<String, String> data) {
-        User user = userRepo.findByUsernameAndPassword(
+    public Admin adminLogin(@RequestBody Map<String, String> data) {
+        return adminRepo.findByUsernameAndPassword(
                 data.get("username"), data.get("password"));
-        if (user != null && "ADMIN".equalsIgnoreCase(user.getRole())) {
-            return user;
-        }
-        return null;
     }
 
     /** GET /admin/auctions */

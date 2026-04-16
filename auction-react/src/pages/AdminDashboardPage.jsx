@@ -12,10 +12,11 @@ export default function AdminDashboardPage() {
 
   // Create auction form
   const [form, setForm] = useState({
-    name: '', price: '',
-    startDate: '', startTime: '',
-    endDate: '',   endTime: ''
+    name: '', price: '', startTime: '', endTime: '',
+    brand: '', model: '', color: '', yearsUsed: '0',
+    description: '', category: 'PHONE'
   });
+  const [formError, setFormError] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
 
@@ -37,7 +38,9 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!sessionStorage.getItem('adminId')) { nav('/'); return; }
+    if (!sessionStorage.getItem('adminId') || sessionStorage.getItem('role') !== 'ADMIN') {
+      nav('/'); return;
+    }
     connectSocket(loadAuctions);
     return () => auctions.forEach(a => unsubscribe(`/topic/auction/${a.id}`));
   }, [nav, loadAuctions]);
@@ -74,6 +77,19 @@ export default function AdminDashboardPage() {
 
   async function handleCreate(e) {
     e.preventDefault();
+    setFormError('');
+
+    // Frontend validation
+    const now   = new Date();
+    const start = new Date(form.startTime);
+    const end   = new Date(form.endTime);
+
+    if (!form.startTime) { setFormError('Start time is required'); return; }
+    if (!form.endTime)   { setFormError('End time is required');   return; }
+    if (start < now)     { setFormError('Start time must be in the future'); return; }
+    if (start >= end)    { setFormError('Start time must be before end time'); return; }
+    if (parseInt(form.yearsUsed) < 0) { setFormError('Years used cannot be negative'); return; }
+
     try {
       let imagePath = '/images/default.jpg';
       if (imageFile) {
@@ -81,15 +97,23 @@ export default function AdminDashboardPage() {
         fd.append('file', imageFile);
         imagePath = await api.uploadImage(fd);
       }
-      await api.addAuction({
-        itemName:  form.name,
-        price:     form.price,
-        startTime: `${form.startDate}T${form.startTime}`,
-        endTime:   `${form.endDate}T${form.endTime}`,
+      const res = await api.addAuction({
+        itemName:    form.name,
+        price:       form.price,
+        startTime:   form.startTime,
+        endTime:     form.endTime,
         imagePath,
+        brand:       form.brand,
+        model:       form.model,
+        color:       form.color,
+        yearsUsed:   form.yearsUsed,
+        description: form.description,
+        category:    form.category,
       });
+      if (res?.error) { setFormError(res.error); return; }
+
       flash('Auction created!', true);
-      setForm({ name: '', price: '', startDate: '', startTime: '', endDate: '', endTime: '' });
+      setForm({ name: '', price: '', startTime: '', endTime: '', brand: '', model: '', color: '', yearsUsed: '0', description: '', category: 'PHONE' });
       setImageFile(null);
       setShowCreate(false);
       loadAuctions();
@@ -151,7 +175,7 @@ export default function AdminDashboardPage() {
         <div className="section-header">
           <h3>Auctions</h3>
           <button className="btn-primary" onClick={() => setShowCreate(v => !v)}>
-            {showCreate ? '✕ Cancel' : '+ New Auction'}
+            {showCreate ? 'Cancel' : '+ New Auction'}
           </button>
         </div>
 
@@ -161,44 +185,35 @@ export default function AdminDashboardPage() {
             <form className="create-form" onSubmit={handleCreate}>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Item Name</label>
+                  <label>Item Name *</label>
                   <input placeholder="e.g. iPhone 15 Pro" value={form.name}
                     onChange={e => setForm({...form, name: e.target.value})} required />
                 </div>
                 <div className="form-group">
-                  <label>Starting Price (₹)</label>
+                  <label>Starting Price (₹) *</label>
                   <input type="number" placeholder="e.g. 50000" value={form.price}
                     onChange={e => setForm({...form, price: e.target.value})} required />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Start Date</label>
-                  <input type="date" value={form.startDate}
-                    onChange={e => setForm({...form, startDate: e.target.value})} required />
-                </div>
-                <div className="form-group">
-                  <label>Start Time</label>
-                  <input type="time" value={form.startTime}
-                    onChange={e => setForm({...form, startTime: e.target.value})} required />
+                  <label>Item Image</label>
+                  <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>End Date</label>
-                  <input type="date" value={form.endDate}
-                    onChange={e => setForm({...form, endDate: e.target.value})} required />
+                  <label>Start Date &amp; Time *</label>
+                  <input type="datetime-local" value={form.startTime}
+                    onChange={e => { setForm({...form, startTime: e.target.value}); setFormError(''); }} required />
                 </div>
                 <div className="form-group">
-                  <label>End Time</label>
-                  <input type="time" value={form.endTime}
-                    onChange={e => setForm({...form, endTime: e.target.value})} required />
+                  <label>End Date &amp; Time *</label>
+                  <input type="datetime-local" value={form.endTime}
+                    onChange={e => { setForm({...form, endTime: e.target.value}); setFormError(''); }} required />
                 </div>
               </div>
-              <div className="form-group">
-                <label>Item Image</label>
-                <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} />
-              </div>
+              {formError && <p className="error-msg">{formError}</p>}
               <button type="submit" className="btn-primary">Create Auction</button>
             </form>
           </section>
@@ -236,7 +251,7 @@ export default function AdminDashboardPage() {
                       <td>{new Date(a.endTime).toLocaleString()}</td>
                       <td>
                         <span className={`badge ${isLive ? 'live' : 'ended'}`}>
-                          {isLive ? '🟢 Live' : '🔴 Ended'}
+                          {isLive ? 'Live' : 'Ended'}
                         </span>
                       </td>
                       <td>
@@ -273,7 +288,7 @@ export default function AdminDashboardPage() {
                               ? <em style={{color:'#888'}}>No bids yet</em>
                               : (bidsMap[a.id] || []).map((b, i) => (
                                   <span key={i} className={`bid-chip ${i === 0 ? 'top' : ''}`}>
-                                    {i === 0 ? '🏆 ' : ''}{b.username} — ₹{b.amount?.toLocaleString()}
+                                    {i === 0 ? '' : ''}{b.username} — ₹{b.amount?.toLocaleString()}
                                   </span>
                                 ))
                             }
